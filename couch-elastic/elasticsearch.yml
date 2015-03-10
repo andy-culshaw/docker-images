@@ -1,0 +1,13 @@
+cluster:
+  name: local
+couchbase:
+  maxConcurrentRequests: 256
+  user: Administrator
+  password: elasticsearch
+node:
+  name: localhost
+path:
+  data: /es-data/elasticsearch/data
+  logs: /es-data/elasticsearch/logs
+  work: /es-data/elasticsearch/work
+  conf: /etc/elasticsearch

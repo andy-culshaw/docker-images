@@ -1,0 +1,8 @@
+#!/bin/bash
+
+CB_USERNAME=${CB_USERNAME:-Administrator}
+CB_PASSWORD=${CB_PASSWORD:-couchbase}
+service elasticsearch start
+UUID=$(curl -s -u $CB_USERNAME:$CB_PASSWORD http://127.0.0.1:8091/pools | sed s/.*uuid=//g | sed s/\".*//g)
+sleep 5
+curl -u $CB_USERNAME:$CB_PASSWORD "http://127.0.0.1:8091/pools/default/remoteClusters?uuid=$UUID" -d password=elasticsearch -d username=Administrator -d hostname=127.0.0.1:9091 -d name=elasticsearch

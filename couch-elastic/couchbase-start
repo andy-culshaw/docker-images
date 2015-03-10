@@ -1,0 +1,29 @@
+#!/bin/bash
+
+LOCAL_IP=`hostname --ip-address`
+IP=${IP:-$LOCAL_IP}
+CB_USERNAME=${CB_USERNAME:-Administrator}
+CB_PASSWORD=${CB_PASSWORD:-couchbase}
+CB_RAMSIZE=${CB_RAMSIZE:-4096}
+CB_DEFAULT_BUCKET_NAME=${CB_DEFAULT_BUCKET_NAME:-default}
+CB_DEFAULT_BUCKET_RAMSIZE=${CB_DEFAULT_BUCKET_RAMSIZE:-128}
+
+# Start Couchbase in background
+#su - couchbase -c "/opt/couchbase/bin/couchbase-server -- -noinput" &
+#PID=$!
+service couchbase-server start
+
+sleep 5
+
+# Init Couchbase
+curl 'http://127.0.0.1:8091/nodes/self/controller/settings' -d path=/cb-data -d index_path=/cb-index
+
+curl 'http://127.0.0.1:8091/node/controller/rename' -d hostname=$IP
+
+curl 'http://127.0.0.1:8091/pools/default' -d memoryQuota=$CB_RAMSIZE
+
+curl 'http://127.0.0.1:8091/pools/default/buckets?just_validate=1&ignore_warnings=1' -d threadsNumber=3 -d replicaIndex=0 -d replicaNumber=1 -d ramQuotaMB=$CB_RAMSIZE -d bucketType=membase -d name=default -d authType=sasl -d saslPassword=
+
+curl 'http://127.0.0.1:8091/settings/stats' -d sendStats=false
+
+curl 'http://127.0.0.1:8091/settings/web' -d password=$CB_PASSWORD -d username=$CB_USERNAME -d port=SAME
