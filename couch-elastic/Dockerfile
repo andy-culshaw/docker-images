@@ -1,5 +1,5 @@
 FROM ubuntu:14.04
-MAINTAINER Andy Culshaw <andy.culshaw@kurtosys.com>
+MAINTAINER Andy Culshaw <andy.culshaw@gmail.com>
 
 # Install utilities
 RUN apt-get -qq update
